@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Enhancer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Image Enhancer</h1>
+
+        <form action="{{ url_for('enhance_image') }}" method="POST" enctype="multipart/form-data">
+            <label for="imageUpload">Choose an image to enhance:</label>
+            <input type="file" id="imageUpload" name="image" required>
+
+            <div class="controls">
+                <label for="enhancement">Enhancement Type:</label>
+                <select id="enhancement" name="enhancement">
+                    <option value="noise">Noise</option>
+                    <option value="blur">Blur</option>
+                    <option value="black">Black</option>
+                    <option value="gray">Gray</option>
+                </select>
+            </div>
+
+            <button type="submit">Enhance Image</button>
+        </form>
+
+        {% if enhanced_image %}
+            <h2>Enhanced Image:</h2>
+            <img src="{{ url_for('static', filename='uploads/' + enhanced_image) }}" alt="Enhanced Image">
+        {% endif %}
+    </div>
+</body>
+</html>
