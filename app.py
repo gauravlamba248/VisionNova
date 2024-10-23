@@ -3,7 +3,9 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from enhancer.Enhancer import process
+from VisionNova.loader import Loader
+from VisionNova.model import Model
+from VisionNova.utils import Utils
 
 app = Flask(__name__)
 
@@ -40,8 +42,8 @@ def enhance_image():
         file.save(filepath)
 
         enhancement_type = request.form['enhancement']
+
         weight_path = os.path.join(WEIGHTS_DIR, enhancement_type + '.hdf5')
-        image_shape = (128, 128, 3)
         batch_size = 128
 
         # Create a unique filename for the enhanced image
@@ -52,8 +54,17 @@ def enhance_image():
         os.environ['CUDA_VISIBLE_DEVICES'] = ''
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-        # Call the process function to enhance the image
-        process(weight_path, filepath, image_shape, batch_size, output_path)
+        # load image and model, preprocess image
+        image = Loader.load_image(filepath)
+        model = Model(weight_path)
+        image = Utils.pre_process(image)
+
+        # process image
+        image = model.process_image(image, batch_size)
+
+        # postprocess image, save image
+        image = Utils.post_process(image)
+        Loader.save_image(image, output_path)
 
         # Render the template with the enhanced image
         return render_template('index.html', enhanced_image=enhanced_filename)
