@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from VisionNova.loader import Loader
 from VisionNova.model import Model
-from VisionNova.utils import Utils
+from VisionNova.utils import ImageUtils
 
 app = Flask(__name__)
 
@@ -54,17 +54,31 @@ def enhance_image():
         os.environ['CUDA_VISIBLE_DEVICES'] = ''
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-        # load image and model, preprocess image
-        image = Loader.load_image(filepath)
-        model = Model(weight_path)
-        image = Utils.pre_process(image)
+        try:
+            # load image and model, preprocess image
+            image = Loader.load_image(filepath)
+            model = Model(weight_path)
+            processor = ImageUtils()
+            image = processor.pre_process(image)
 
-        # process image
-        image = model.process_image(image, batch_size)
+            # process image
+            image = model.process_image(image, batch_size)
 
-        # postprocess image, save image
-        image = Utils.post_process(image)
-        Loader.save_image(image, output_path)
+            # postprocess image, save image
+            image = processor.post_process(image)
+            Loader.save_image(image, output_path)
+
+            # Render the template with the enhanced image
+            return render_template('index.html', enhanced_image=enhanced_filename)
+
+        except ValueError as e:
+            # Update the exception reason on the frontend if any other exception occurs
+            return render_template('index.html', error=str(e))
+
+        except Exception as e:
+            # Terminate the program if a RuntimeError occurs
+            print(f"Error: {e}")
+            exit(1)
 
         # Render the template with the enhanced image
         return render_template('index.html', enhanced_image=enhanced_filename)

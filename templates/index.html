@@ -28,8 +28,18 @@
         </form>
 
         {% if enhanced_image %}
-            <h2>Enhanced Image:</h2>
-            <img src="{{ url_for('static', filename='uploads/' + enhanced_image) }}" alt="Enhanced Image">
+        <h2>Enhanced Image:</h2>
+        <img src="{{ url_for('static', filename='uploads/' + enhanced_image) }}" alt="Enhanced Image">
+        {% endif %}
+
+        {% if error %}
+            <h2 style="color: red;">Error:</h2>
+            <p>{{ error }}</p>
+        {% endif %}
+
+        {% if status %}
+            <h2>Status:</h2>
+            <p>{{ status }}</p>
         {% endif %}
     </div>
 </body>
