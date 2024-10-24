@@ -11,14 +11,14 @@ app = Flask(__name__)
 
 # define paths
 UPLOAD_DIR = 'static/uploads/'
-WEIGHTS_DIR = 'weights'
+WEIGHTS_DIR = os.path.abspath('weights')
 
 app.config['UPLOAD_DIR'] = UPLOAD_DIR
 
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-model =  Model()
+model =  Model(WEIGHTS_DIR)
 
 # Ensure upload and download directories exist
 if not os.path.exists(UPLOAD_DIR):
@@ -45,7 +45,6 @@ def enhance_image():
 
         enhancement_type = request.form['enhancement']
 
-        weight_path = os.path.join(WEIGHTS_DIR, enhancement_type + '.hdf5')
         batch_size = 128
 
         # Create a unique filename for the enhanced image
@@ -63,7 +62,7 @@ def enhance_image():
             image = processor.pre_process(image)
 
             # process image
-            image = model.process_image(image, batch_size, weight_path)
+            image = model.process_image(image, batch_size, enhancement_type)
 
             # postprocess image, save image
             image = processor.post_process(image)
