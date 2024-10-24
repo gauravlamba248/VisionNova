@@ -1,13 +1,18 @@
 import numpy as np
-from .config import TILE_WIDTH, TILE_HEIGHT, OVERLAP, CHANNELS
+
+from .config import CHANNELS, OVERLAP, TILE_HEIGHT, TILE_WIDTH
+
 
 class ImageUtils:
     """Utility class for image processing tasks"""
+
     def __init__(self):
         self.image_width = None
         self.image_height = None
 
-    def __split_into_tiles(self, image_array: np.ndarray, tile_width=TILE_WIDTH, tile_height = TILE_HEIGHT, overlap=OVERLAP) -> np.ndarray:
+    def __split_into_tiles(
+        self, image_array: np.ndarray, tile_width=TILE_WIDTH, tile_height=TILE_HEIGHT, overlap=OVERLAP
+    ) -> np.ndarray:
         """
         Splits the input image array into overlapping tiles.
 
@@ -34,13 +39,21 @@ class ImageUtils:
             for col_start in range(0, width, stride_width):
                 col_end = min(col_start + tile_width, width)
                 col_start = col_end - tile_width
-                
+
                 tile = image_array[row_start:row_end, col_start:col_end, :]
                 tiles.append(tile)
 
         return np.array(tiles)
 
-    def __combine_tiles(self, tiles: np.ndarray, width: int, height: int, tile_width=TILE_WIDTH, tile_height = TILE_HEIGHT, overlap=OVERLAP) -> np.ndarray:
+    def __combine_tiles(
+        self,
+        tiles: np.ndarray,
+        width: int,
+        height: int,
+        tile_width=TILE_WIDTH,
+        tile_height=TILE_HEIGHT,
+        overlap=OVERLAP,
+    ) -> np.ndarray:
         """
         Combines overlapping tiles back into a single image.
 
@@ -62,15 +75,15 @@ class ImageUtils:
 
         idx = 0
         for row_start in range(0, height, stride_height):
-            row_end = min(row_start+tile_height, height)
+            row_end = min(row_start + tile_height, height)
             row_start = row_end - tile_height
 
             for col_start in range(0, width, stride_width):
-                col_end = min(col_start+tile_width, width)
+                col_end = min(col_start + tile_width, width)
                 col_start = col_end - tile_width
 
-                combined_image[row_start:row_end, col_start:col_end , :] += tiles[idx][:tile_height, :tile_width, :]
-                weight_map[row_start:row_end, col_start:col_end , :] += 1
+                combined_image[row_start:row_end, col_start:col_end, :] += tiles[idx][:tile_height, :tile_width, :]
+                weight_map[row_start:row_end, col_start:col_end, :] += 1
                 idx += 1
 
         # Avoid division by zero
