@@ -18,6 +18,8 @@ app.config['UPLOAD_DIR'] = UPLOAD_DIR
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+model =  Model()
+
 # Ensure upload and download directories exist
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
@@ -57,12 +59,11 @@ def enhance_image():
         try:
             # load image and model, preprocess image
             image = Loader.load_image(filepath)
-            model = Model(weight_path)
             processor = ImageUtils()
             image = processor.pre_process(image)
 
             # process image
-            image = model.process_image(image, batch_size)
+            image = model.process_image(image, batch_size, weight_path)
 
             # postprocess image, save image
             image = processor.post_process(image)
