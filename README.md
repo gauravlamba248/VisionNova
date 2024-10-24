@@ -24,9 +24,12 @@ This project provides a simple and efficient way to enhance images that have bee
 ## Usage
 
 - Run command `python app.py`
-- Upload Picture on frontend
-- Select type of corruption
-- Click on Enhance button
+- Upload your picture through the frontend interface.
+- Select the type of corruption affecting your image.
+- Click the "Enhance" button.
+
+## Contributing
+Check [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
 ## License
 
