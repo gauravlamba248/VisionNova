@@ -1,7 +1,7 @@
-Pillow==8.4.0
-imageio==2.9.0
-numpy==1.21.4
-keras==2.6.0
-tensorflow==2.7.0
-Flask==2.0.2
-Werkzeug==2.0.2
+Pillow>=8.4.0
+imageio>=2.9.0
+numpy>=1.21.4
+keras>=2.6.0
+tensorflow>=2.7.0
+Flask>=2.0.2
+Werkzeug>=2.0.2
