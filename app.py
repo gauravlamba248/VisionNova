@@ -1,5 +1,8 @@
 import os
 
+import numpy as np
+from PIL import Image, ImageEnhance
+
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 from flask import Flask, render_template, request, send_file
 from werkzeug.utils import secure_filename
@@ -11,8 +14,9 @@ from VisionNova.utils import ImageUtils
 app = Flask(__name__)
 
 # Define paths
-UPLOAD_DIR = "static/uploads/"
-WEIGHTS_DIR = "weights"
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads")
+
+WEIGHTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "weights")
 
 app.config["UPLOAD_DIR"] = UPLOAD_DIR
 
@@ -56,16 +60,26 @@ def enhance_image():
         output_path = os.path.join(app.config["UPLOAD_DIR"], enhanced_filename)
 
         try:
-            # Load and preprocess the image
+            # Load image
             image = Loader.load_image(filepath)
-            processor = ImageUtils()
-            image = processor.pre_process(image)
 
-            # Process image
-            image = model.process_image(image, batch_size, enhancement_type)
+            if enhancement_type.lower() == "sharp":
+                image = Image.fromarray(image)
+                enhancer = ImageEnhance.Sharpness(image)
+                image = enhancer.enhance(factor)
+                image = np.array(image)
 
-            # Postprocess and save the image
-            image = processor.post_process(image)
+            else:
+                # Preprocess the image
+                processor = ImageUtils()
+                image = processor.pre_process(image)
+
+                # Process image
+                image = model.process_image(image, batch_size, enhancement_type)
+
+                # Postprocess and save the image
+                image = processor.post_process(image)
+
             Loader.save_image(image, output_path)
 
             # Return the enhanced image as a response
