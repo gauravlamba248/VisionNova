@@ -3,62 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vision Nova - Image Enhancer</title>
+    <title>VisionNova</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <main class="main-container">
         <h1>Vision Nova - Image Enhancer</h1>
-
-        <div class="upload-area" id="uploadArea">
-            <h2>Drag & Drop Image Here</h2>
-            <p>or</p>
-            <input type="file" id="imageUpload" name="image" accept="image/*" required>
-        </div>
-
-        <h2>Enhanced Image:</h2>
-        <div class="image-container">
-            <div class="image-wrapper">
-                <h3>Original Image</h3>
-                <img id="originalImage" src="" alt="Original Image" style="display:none;">
+        <div class="playground">
+            <!-- Input Section -->
+            <div class="input-section">
+                <!-- Input-Image-Section -->
+                <div class="input-area" id="inputArea">
+                    <div class="upload-area" id="uploadArea">
+                        <p class="upload-message">Drop Image Here<br>- or -<br>Click to Upload</p>
+                        <input type="file" id="fileInput" name="image" accept="image/*" hidden>
+                    </div>
+                    <div class="input-image-container" id="inputImageContainer">
+                        <img id="inputImage" src="#" alt="input image">
+                        <button class="close-button" id="closeButton">&times;</button>
+                    </div>
+                </div>
+                <!-- Control Section -->
+                <div class="input-control">
+                    <div class="enhancement-control">
+                        <div class="enhancement-select">
+                            <select id="enhancementType">
+                                <option value="noise">Noise</option>
+                                <option value="gray">Black and White</option>
+                                <option value="black">Black dots</option>
+                                <option value="sharp">Sharp</option>
+                            </select>
+                        </div>
+                        <input type="number" id="factor" name="factor" min="1" max="10" value="1">
+                    </div>
+                    <div id="progressBarContainer">
+                        <progress id="progressBar" value="0" max="100"></progress>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="submit-button">
+                        <button class="submit-button" id="submitButton">Enhance</button>
+                    </div>
+                </div>
             </div>
-            <div class="image-wrapper">
-                <h3>Enhanced Image</h3>
-                <img id="outputImage" src="" alt="Enhanced Image" style="display:none;">
-                <div class="button-container" style="display: flex; justify-content: center; margin-top: 10px;">
-                    <a id="downloadButton" class="download-button" href="#" style="display:none;">Download Enhanced Image</a>
-                    <button id="reuseButton" class="reuse-button" style="display:none;">Reuse This Image</button>
+
+            <!-- Output Section -->
+            <div class="output-section">
+                <!-- Output Image section -->
+                <div class="output-area" id="outputArea">
+                    <p class="output-message" id="outputMessage">Output</p>
+                    <div class="output-image-container" id="outputImageContainer">
+                        <img id="outputImage" src="#" alt="output image">
+                    </div>
+                </div>
+                <!-- output buttons section -->
+                <div class="output-control">
+                    <a id="downloadButton" class="download-button" href="#" style="display:none;">Download</a>
+                    <button id="reuseButton">Reuse</button>
                 </div>
             </div>
         </div>
-
-        <div class="controls">
-            <label for="enhancementType">Enhancement Type:</label>
-            <select id="enhancementType">
-                <option value="gray">Black and White (make image colorful)</option>
-                <option value="blur">Blur</option>
-                <option value="noise">Noise</option>
-                <option value="black">Black Spots (remove black spots/noise)</option>
-                <option value="sharp">Sharp</option>
-            </select>
-
-            <label for="factor">Enhancement Factor (1-10):</label>
-            <input type="number" id="factor" name="factor" min="1" max="10" value="1">
-
-            <button id="enhanceButton">Enhance Image</button>
-        </div>
-
-        <div class="progress">
-            <label>Processing Image: <span id="progressValue">0%</span></label>
-            <progress id="progressBar" value="0" max="100"></progress>
-        </div>
-
-        {% if error %}
-            <h2 style="color: red;">Error:</h2>
-            <p>{{ error }}</p>
-        {% endif %}
-    </div>
-
+    </main>
+    
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='javascript/script.js') }}"></script>
 </body>
 </html>

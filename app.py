@@ -1,10 +1,11 @@
 import os
 
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 import numpy as np
 from PIL import Image, ImageEnhance
-
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 from flask import Flask, render_template, request, send_file
+from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
 
 from VisionNova.loader import Loader
@@ -12,6 +13,7 @@ from VisionNova.model import Model
 from VisionNova.utils import ImageUtils
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # Define paths
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads")
@@ -62,24 +64,30 @@ def enhance_image():
         try:
             # Load image
             image = Loader.load_image(filepath)
+            socketio.emit('progress',{'percent':10})
 
             if enhancement_type.lower() == "sharp":
                 image = Image.fromarray(image)
+                socketio.emit('progress',{'percent':30})
                 enhancer = ImageEnhance.Sharpness(image)
                 image = enhancer.enhance(factor)
+                socketio.emit('progress',{'percent':80})
                 image = np.array(image)
 
             else:
                 # Preprocess the image
                 processor = ImageUtils()
                 image = processor.pre_process(image)
+                socketio.emit('progress',{'percent':30})
 
                 # Process image
                 image = model.process_image(image, batch_size, enhancement_type)
+                socketio.emit('progress',{'percent':80})
 
                 # Postprocess and save the image
                 image = processor.post_process(image)
 
+            socketio.emit('progress',{'percent':90})
             Loader.save_image(image, output_path)
 
             # Return the enhanced image as a response
@@ -92,4 +100,4 @@ def enhance_image():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)
