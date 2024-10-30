@@ -57,7 +57,6 @@ def enhance_image():
         factor = int(request.form.get("factor", 1))
 
         batch_size = 128
-
         enhanced_filename = "enhanced_" + filename
         output_path = os.path.join(app.config["UPLOAD_DIR"], enhanced_filename)
 
@@ -65,32 +64,40 @@ def enhance_image():
             # Load image
             image = Loader.load_image(filepath)
             socketio.emit("progress", {"percent": 10})
+            socketio.sleep(0.1)
 
             if enhancement_type.lower() == "sharp":
                 image = Image.fromarray(image)
                 socketio.emit("progress", {"percent": 30})
+                socketio.sleep(0.1)
+
                 enhancer = ImageEnhance.Sharpness(image)
                 image = enhancer.enhance(factor)
+                
                 socketio.emit("progress", {"percent": 80})
+                socketio.sleep(0.1)
+
                 image = np.array(image)
 
             else:
-                # Preprocess the image
                 processor = ImageUtils()
                 image = processor.pre_process(image)
                 socketio.emit("progress", {"percent": 30})
+                socketio.sleep(0.1)
 
-                # Process image
-                image = model.process_image(image, batch_size, enhancement_type)
-                socketio.emit("progress", {"percent": 80})
+                for i in range(1, factor + 1):
+                    image = model.process_image(image, batch_size, enhancement_type)
+                    completion = 30 + (50 // factor) * i
+                    socketio.emit("progress", {"percent": completion})
+                    socketio.sleep(0.1)
 
-                # Postprocess and save the image
                 image = processor.post_process(image)
 
             socketio.emit("progress", {"percent": 90})
+            socketio.sleep(0.1)
+
             Loader.save_image(image, output_path)
 
-            # Return the enhanced image as a response
             return send_file(output_path, mimetype="image/png")
 
         except Exception as e:

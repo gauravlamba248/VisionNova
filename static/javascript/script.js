@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Socket.IO event listeners
     socket.on('progress', function (data) {
+        console.log("get progress" + data.percent);
         progressBar.value = data.percent;
         progressText.textContent = `${data.percent}%`;
     });
@@ -80,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function showOutputImage() {
+        progressBar.value = 0;
         progressBarContainer.style.display = "none";
         outputMessage.style.display = "none";
         outputImageContainer.style.display = "flex";
