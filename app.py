@@ -73,7 +73,7 @@ def enhance_image():
 
                 enhancer = ImageEnhance.Sharpness(image)
                 image = enhancer.enhance(factor)
-                
+
                 socketio.emit("progress", {"percent": 80})
                 socketio.sleep(0.1)
 
