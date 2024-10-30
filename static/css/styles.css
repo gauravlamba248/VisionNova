@@ -182,24 +182,40 @@ img {
     margin-top: 10px;
 }
 
+/* Progress Bar Container */
 #progressBarContainer {
     display: none;
-    margin: 10px 0;
+    margin-top: 10px;
     width: 100%;
     text-align: center;
+    position: relative;
+    align-items: center;
 }
 
 progress {
-    width: 100%;
+    width: 80%;
     height: 20px;
+    margin-right: 5%;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #333;
+    border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+    background-color: #4caf50;
     border-radius: 5px;
 }
 
 #progressText {
-    margin-top: 5px;
+    width: 15%;
     font-weight: bold;
-    color: #333;
+    color: #e0e0e0;
+    text-align: center;
 }
 
 @media (min-height: 100vh) {
