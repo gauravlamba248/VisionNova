@@ -18,10 +18,10 @@ We welcome contributions to our project! To ensure a smooth contribution process
    - Make the necessary changes to the codebase. Ensure that your code adheres to the project's coding standards.
 
 1. **Format Code**
-   - We use [Black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/) for code formatting. Please run the following commands to check your code:
+   - We use [Black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/). For code formatting Please run the following commands:
      ```bash
-     isort app.py --profile black
-     black app.py --line-length 120
+     isort .
+     black .
      ```
 
 1. **Commit Your Changes and Push Your Changes**
