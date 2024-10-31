@@ -23,7 +23,7 @@ WEIGHTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "weights"
 app.config["UPLOAD_DIR"] = UPLOAD_DIR
 
 # Allowed image extensions
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "tif"}
 
 model = Model(WEIGHTS_DIR)
 
