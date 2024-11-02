@@ -6,7 +6,7 @@ from keras.models import load_model
 from .config import CHANNELS, TILE_HEIGHT, TILE_WIDTH
 
 
-class Model:
+class Keras_enhancer:
     """
     A Container for Keras models for image processing.
 
@@ -16,7 +16,7 @@ class Model:
 
     def __init__(self, models_dir):
         """
-        Initializes the Model class.
+        Initializes the Keras_enhancer class.
 
         Args:
             models_dir (str): The directory where the pre-trained models are stored.
@@ -36,19 +36,19 @@ class Model:
         self.models[model_name] = model
         return model
 
-    def process_image(self, image: np.ndarray, batch_size: int, enhancement_type: str) -> np.ndarray:
+    def process_image(self, image: np.ndarray, batch_size: int, model_name: str) -> np.ndarray:
         """
         Processes the input image using the loaded model.
 
         Args:
             image (np.ndarray): The input image array to be processed.
             batch_size (int): The number of samples per gradient update.
-            enhancement_type (str): The type of enhancement to be applied.
+            model_name (str): The type of enhancement to be applied.
 
         Returns:
             np.ndarray: The model's predictions for the input image.
         """
-        model = self._load_model(enhancement_type)
+        model = self._load_model(model_name)
         if image.shape[1] != TILE_HEIGHT or image.shape[2] != TILE_WIDTH or image.shape[3] != CHANNELS:
             raise RuntimeError(
                 f"INTERNAL ERROR: Tiles size must be equal to {TILE_HEIGHT}x{TILE_WIDTH}x{CHANNELS} but has shape {image.shape[1:]}"

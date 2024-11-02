@@ -9,7 +9,8 @@ from PIL import Image, ImageEnhance
 from werkzeug.utils import secure_filename
 
 from VisionNova.loader import Loader
-from VisionNova.model import Model
+from VisionNova.model import Keras_enhancer
+from VisionNova.pillow import Pillow_enhancer
 from VisionNova.utils import ImageUtils
 
 app = Flask(__name__)
@@ -25,7 +26,8 @@ app.config["UPLOAD_DIR"] = UPLOAD_DIR
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "tif"}
 
-model = Model(WEIGHTS_DIR)
+keras_enhancer = Keras_enhancer(WEIGHTS_DIR)
+pillow_enhancer = Pillow_enhancer()
 
 # Ensure upload and download directories exist
 if not os.path.exists(UPLOAD_DIR):
@@ -54,6 +56,7 @@ def enhance_image():
         file.save(filepath)
 
         enhancement_type = request.form["enhancement"]
+        library, enhancement_type = enhancement_type.split("_")
         factor = int(request.form.get("factor", 1))
 
         batch_size = 128
@@ -66,13 +69,12 @@ def enhance_image():
             socketio.emit("progress", {"percent": 10})
             socketio.sleep(0.1)
 
-            if enhancement_type.lower() == "sharp":
+            if library.lower() == "pillow":
                 image = Image.fromarray(image)
                 socketio.emit("progress", {"percent": 30})
                 socketio.sleep(0.1)
 
-                enhancer = ImageEnhance.Sharpness(image)
-                image = enhancer.enhance(factor)
+                image = pillow_enhancer.enhance(image, enhancement_type, factor)
 
                 socketio.emit("progress", {"percent": 80})
                 socketio.sleep(0.1)
@@ -86,7 +88,7 @@ def enhance_image():
                 socketio.sleep(0.1)
 
                 for i in range(1, factor + 1):
-                    image = model.process_image(image, batch_size, enhancement_type)
+                    image = keras_enhancer.process_image(image, batch_size, enhancement_type)
                     completion = 30 + (50 // factor) * i
                     socketio.emit("progress", {"percent": completion})
                     socketio.sleep(0.1)
