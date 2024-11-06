@@ -2,6 +2,8 @@
 
 A Python-based image enhancer that uses deep learning techniques to restore corrupted images.
 
+<img src="assets/VisionNovaLogo.svg" alt="VisionNova Logo" style="width: 60%; text-align:center; background-color: #e3e3e3; display: flex; justify-content: center;" />
+
 ## Overview
 
 This project provides a simple and efficient way to enhance images that have been corrupted by various types of noise or degradation. The enhancer uses deep learning models along with PIL to learn the patterns and features of the original images and then applies this knowledge to restore the corrupted images.
