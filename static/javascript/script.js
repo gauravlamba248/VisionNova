@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const socket = io();
     socket.on('connect', () => console.log("Connected to SocketIO server"));
-    
+
     // Socket.IO event listeners
     socket.on('progress', function (data) {
         console.log("get progress" + data.percent);
@@ -112,24 +112,47 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadArea.style.display = "flex";
     }
 
+    const enhancementType = document.getElementById('enhancementType');
+    const factorInput = document.getElementById('factor');
+
+    // Managing factor range according to library used
+    function updateFactorInput() {
+        if (enhancementType.value.startsWith('pillow')) {
+            factorInput.min = -100;
+            factorInput.max = 100;
+            factorInput.value = 50;
+        } else {
+            factorInput.min = 1;
+            factorInput.max = 10;
+            factorInput.value = 1;
+        }
+    }
+
+    enhancementType.addEventListener('change', updateFactorInput);
+
     submitButton.addEventListener('click', async function () {
         const file = fileInput.files[0];
-        const enhancementType = document.getElementById('enhancementType').value;
-        const factor = document.getElementById('factor').value;
+        const factor = parseFloat(factorInput.value);
 
         if (!file) {
             alert("Please upload an image first.");
             return;
         }
-
-        if (factor < 1 || factor > 10) {
-            alert("Please enter a valid enhancement factor between 1 and 10.");
-            return;
+        if (enhancementType.value.startsWith('pillow')) {
+            if (isNaN(factor) || factor > 100 || factor < -100) {
+                alert("Please enter a valid enhancement factor between 1 and 10.");
+                return;
+            }
+        } else if (enhancementType.value.startsWith('keras')) {
+            if (isNaN(factor) || factor < 1 || factor > 10) {
+                alert("Please enter a valid enhancement factor between 1 and 10.");
+                return;
+            }
         }
 
         const formData = new FormData();
         formData.append('image', file);
-        formData.append('enhancement', enhancementType);
+        formData.append('enhancement', enhancementType.value);
         formData.append('factor', factor);
 
         try {

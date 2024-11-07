@@ -5,7 +5,7 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import numpy as np
 from flask import Flask, render_template, request, send_file
 from flask_socketio import SocketIO, emit
-from PIL import Image, ImageEnhance
+from PIL import Image
 from werkzeug.utils import secure_filename
 
 from VisionNova.loader import Loader
@@ -74,7 +74,8 @@ def enhance_image():
                 socketio.emit("progress", {"percent": 30})
                 socketio.sleep(0.1)
 
-                image = pillow_enhancer.enhance(image, enhancement_type, factor)
+                pil_factor = 1 + (factor / 100)
+                image = pillow_enhancer.enhance(image, enhancement_type, pil_factor)
 
                 socketio.emit("progress", {"percent": 80})
                 socketio.sleep(0.1)
@@ -87,9 +88,10 @@ def enhance_image():
                 socketio.emit("progress", {"percent": 30})
                 socketio.sleep(0.1)
 
-                for i in range(1, factor + 1):
+                keras_factor = max(0, min(10, factor))
+                for i in range(1, keras_factor + 1):
                     image = keras_enhancer.process_image(image, batch_size, enhancement_type)
-                    completion = 30 + (50 // factor) * i
+                    completion = 30 + (50 // keras_factor) * i
                     socketio.emit("progress", {"percent": completion})
                     socketio.sleep(0.1)
 
