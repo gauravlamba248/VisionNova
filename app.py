@@ -74,7 +74,7 @@ def enhance_image():
                 socketio.emit("progress", {"percent": 30})
                 socketio.sleep(0.1)
 
-                pil_factor = 1 + (factor/100)
+                pil_factor = 1 + (factor / 100)
                 image = pillow_enhancer.enhance(image, enhancement_type, pil_factor)
 
                 socketio.emit("progress", {"percent": 80})
@@ -87,7 +87,7 @@ def enhance_image():
                 image = processor.pre_process(image)
                 socketio.emit("progress", {"percent": 30})
                 socketio.sleep(0.1)
-                
+
                 keras_factor = max(0, min(10, factor))
                 for i in range(1, keras_factor + 1):
                     image = keras_enhancer.process_image(image, batch_size, enhancement_type)
