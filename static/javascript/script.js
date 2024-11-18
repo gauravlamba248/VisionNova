@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function enableInput() {
         inputArea.style.border = "2px dashed #666";
         inputImageContainer.style.display = "none";
+        fileInput.value = "";
         fileInput.disabled = false;
         uploadArea.style.display = "flex";
     }
